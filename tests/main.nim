@@ -9,6 +9,8 @@ suite "pledge tests":
 
     try:
       check pledge("stdio rpath") == false
+      # Should never reach here
+      check false
     except OSError:
       let msg = getCurrentExceptionMsg()
       check msg == "Operation not permitted"
