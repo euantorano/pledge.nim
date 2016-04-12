@@ -1,4 +1,4 @@
-import pledge, unittest
+import pledge, unittest, os
 
 suite "pledge tests":
   test  "can pledge":
@@ -6,9 +6,9 @@ suite "pledge tests":
 
   test "can not elevate":
     check pledge("stdio")
-    check pledge("stdio rpath") == false
 
-  test "can pledge and not read file":
-    ## This test should cause the tests to abort, as the kernel will kill us for trying to access the file.
-    check pledge("stdio")
-    let f = open("/etc/rc.conf")
+    try:
+      check pledge("stdio rpath") == false
+    except OSError:
+      let msg = getCurrentExceptionMsg()
+      check msg == "Operation not permitted"
