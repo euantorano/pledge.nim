@@ -43,7 +43,7 @@ when defined(openbsd):
   proc pledge*(promises: openArray[Promise]): bool {.raises: [OSError].} =
     ## Pledge to use only the defined functions, separated by a space. Always returns true on non-OpenBSD systems.
     let promisesString = promisesToString(promises)
-    let pledged = pledge_c(promises, nil)
+    let pledged = pledge_c(promisesString, nil)
 
     if pledged != 0:
       let errorCode = osLastError()
