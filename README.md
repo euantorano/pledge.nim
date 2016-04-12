@@ -6,6 +6,10 @@ OpenBSD's pledge(2) for Nim.
 
 This package can be installed using `nimble`:
 
+```
+nimble install pledge
+```
+
 ## Usage
 
 ```nim
