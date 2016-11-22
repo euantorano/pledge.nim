@@ -1,6 +1,6 @@
 # pledge.nim
 
-OpenBSD's pledge(2) for Nim.
+A wrapper around OpenBSD's pledge(2) systemcall for Nim.
 
 ## Installation
 
@@ -15,7 +15,7 @@ nimble install pledge
 ```nim
 import pledge
 
-if not pledge([Promises.Stdio]):
+if not pledge(Promises.Stdio):
   # Pledge failed, cannot use stdio
   quit(QuitFailure)
 

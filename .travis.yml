@@ -41,7 +41,7 @@ before_script:
 script:
     - nim c --cc:$CC --verbosity:0 -r pledge.nim
     # Optional: build docs.
-    - nim doc --docSeeSrcUrl:https://github.com/euantorano/pledge.nim/blob/master --project pledge.nim
+    - nim doc2 --docSeeSrcUrl:https://github.com/euantorano/pledge.nim/blob/master --project pledge.nim
 cache:
   directories:
     - nim-master

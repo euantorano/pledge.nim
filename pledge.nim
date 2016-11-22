@@ -1,4 +1,26 @@
-# pledge(2) for Nim
+## A wrapper for the `pledge(2) <http://man.openbsd.org/cgi-bin/man.cgi/OpenBSD-current/man2/pledge.2?query=pledge>`_ systemcall, used to restrict system operations.
+##
+## On systems other than OpenBSD where `pledge` is not yet implemented, the wrapper has no effect.
+##
+## Example of making a single promise
+## ----------------------------------
+##
+## In order to pledge to only use the `stdio` promise as described in the `pledge(2) man page <http://man.openbsd.org/cgi-bin/man.cgi/OpenBSD-current/man2/pledge.2?query=pledge>`_, you simply pass the `Promise.Stdio` to `pledge()`:
+##
+## .. code-block::nim
+##   import pledge
+##
+##   let pledged = pledge(Promises.Stdio)
+##
+## Example of making several promises
+## ----------------------------------
+##
+## In order to pledge to use the `stdio` and `rpath` promises as described in the `pledge(2) man page <http://man.openbsd.org/cgi-bin/man.cgi/OpenBSD-current/man2/pledge.2?query=pledge>`_, you simply pass the required promises to `pledge()`:
+##
+## .. code-block::nim
+##   import pledge
+##
+##   let pledged = pledge(Promises.Stdio, Promises.Rpath)
 
 from os import osLastError, raiseOSError
 from sequtils import map, deduplicate
@@ -32,7 +54,14 @@ type Promise* {.pure.} = enum
   Pf = "pf",
   Audio = "audio"
 
-when defined(openbsd):
+when defined(nimdoc):
+  proc pledge*(promises: varargs[Promise]): bool {.raises: [OSError].} = discard
+    ## Pledge to use only the defined functions. Always returns true on non-OpenBSD systems.
+    ##
+    ## If the pledge call was successful, this will return true.
+    ##
+    ## If the pledge call is not successful, an `OSError` will be thrown.
+elif defined(openbsd):
   proc pledge_c(promises: cstring, paths: cstringArray): cint {.importc: "pledge".}
 
   proc promisesToString(promises: openArray[Promise]): string =
@@ -40,8 +69,7 @@ when defined(openbsd):
     let stringPromises = map(promises, proc(p: Promise): string = $p)
     return join(deduplicate(stringPromises), " ")
 
-  proc pledge*(promises: openArray[Promise]): bool {.raises: [OSError].} =
-    ## Pledge to use only the defined functions, separated by a space. Always returns true on non-OpenBSD systems.
+  proc pledge*(promises: varargs[Promise]): bool {.raises: [OSError].} =
     let promisesString = promisesToString(promises)
     let pledged = pledge_c(promisesString, nil)
 
@@ -49,8 +77,7 @@ when defined(openbsd):
       let errorCode = osLastError()
       raiseOSError(errorCode)
 
-    return pledged == 0
+    result = true
+
 else:
-  proc pledge*(promises: openArray[Promise]): bool =
-    ## Pledge to use only the defined functions, separated by a space. Always returns true on non-OpenBSD systems.
-    return true
+  proc pledge*(promises: varargs[Promise]): bool = true
