@@ -10,7 +10,7 @@
 ## .. code-block::nim
 ##   import pledge
 ##
-##   let pledged = pledge(Promises.Stdio)
+##   let pledged = pledge(Promise.Stdio)
 ##
 ## Example of making several promises
 ## ----------------------------------
@@ -20,7 +20,7 @@
 ## .. code-block::nim
 ##   import pledge
 ##
-##   let pledged = pledge(Promises.Stdio, Promises.Rpath)
+##   let pledged = pledge(Promise.Stdio, Promise.Rpath)
 
 from os import osLastError, raiseOSError
 from sequtils import map, deduplicate
