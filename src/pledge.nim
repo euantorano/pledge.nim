@@ -10,7 +10,7 @@
 ## .. code-block::nim
 ##   import pledge
 ##
-##   let pledged = pledge(Promise.Stdio)
+##   pledge(Promise.Stdio)
 ##
 ## Example of making several promises
 ## ----------------------------------
@@ -20,7 +20,7 @@
 ## .. code-block::nim
 ##   import pledge
 ##
-##   let pledged = pledge(Promise.Stdio, Promise.Rpath)
+##   pledge(Promise.Stdio, Promise.Rpath)
 
 from os import osLastError, raiseOSError
 from sequtils import map, deduplicate
@@ -35,49 +35,60 @@ type Promise* {.pure.} = enum
   Dpath = "dpath",
   Tmppath = "tmppath",
   Inet = "inet",
+  Mcast = "mcast",
   Fattr = "fattr",
+  Chown = "chown",
   Flock = "flock",
   Unix = "unix",
   Dns = "dns",
   Getpw = "getpw",
   Sendfd = "sendfd",
   Recvfd = "recvfd",
-  Ioctl = "ioctl",
+  Tape = "tape",
   Tty = "tty",
   Proc = "proc",
   Exec = "exec",
-  Prot_exec = "prot_exec",
+  ProtExec = "prot_exec",
   Settime = "settime",
   Ps = "ps",
   Vminfo = "vminfo",
   Id = "id",
   Pf = "pf",
-  Audio = "audio"
+  Audio = "audio",
+  Bpf = "bpf"
 
 when defined(nimdoc):
-  proc pledge*(promises: varargs[Promise]): bool {.raises: [OSError].} = discard
+  proc pledge*(promises: varargs[Promise]) {.raises: [OSError].} = discard
     ## Pledge to use only the defined functions. Always returns true on non-OpenBSD systems.
     ##
-    ## If the pledge call was successful, this will return true.
+    ## If no promises are provided, the process will be restricted to the `_exit(2)` system call.
     ##
     ## If the pledge call is not successful, an `OSError` will be thrown.
 elif defined(openbsd):
-  proc pledge_c(promises: cstring, paths: cstringArray): cint {.importc: "pledge".}
+  proc pledge_c(promises: cstring, paths: cstringArray): cint {.importc: "pledge", header: "<unistd.h>".}
 
   proc promisesToString(promises: openArray[Promise]): string =
     ## Convert a list of promises to a string for use with the `pledge(2)` function.
+    if len(promises) == 0:
+      return ""
+
     let stringPromises = map(promises, proc(p: Promise): string = $p)
-    return join(deduplicate(stringPromises), " ")
+    result = join(deduplicate(stringPromises), " ")
 
-  proc pledge*(promises: varargs[Promise]): bool {.raises: [OSError].} =
+  proc pledge*(promises: varargs[Promise]) {.raises: [OSError].} =
+    ## Pledge to use only the defined functions. Always returns true on non-OpenBSD systems.
+    ##
+    ## If no promises are provided, the process will be restricted to the `_exit(2)` system call.
+    ##
+    ## If the pledge call is not successful, an `OSError` will be thrown.
     let promisesString = promisesToString(promises)
-    let pledged = pledge_c(promisesString, nil)
 
-    if pledged != 0:
-      let errorCode = osLastError()
-      raiseOSError(errorCode)
-
-    result = true
-
+    if pledge_c(promisesString, nil) != 0:
+      raiseOSError(osLastError())
 else:
-  proc pledge*(promises: varargs[Promise]): bool = true
+  proc pledge*(promises: varargs[Promise]) = discard
+    ## Pledge to use only the defined functions. Always returns true on non-OpenBSD systems.
+    ##
+    ## If no promises are provided, the process will be restricted to the `_exit(2)` system call.
+    ##
+    ## If the pledge call is not successful, an `OSError` will be thrown.

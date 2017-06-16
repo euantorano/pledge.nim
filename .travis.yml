@@ -1,5 +1,3 @@
-
-
 # Copied from https://github.com/nim-lang/Nim/wiki/TravisCI
 language: c
 env:
@@ -39,9 +37,7 @@ install:
 before_script:
     - export PATH="nim-$BRANCH/bin${PATH:+:$PATH}"
 script:
-    - nim c --cc:$CC --verbosity:0 -r pledge.nim
-    # Optional: build docs.
-    - nim doc2 --docSeeSrcUrl:https://github.com/euantorano/pledge.nim/blob/master --project pledge.nim
+    - nim c --cc:$CC --verbosity:0 -r tests/main.nim
 cache:
   directories:
     - nim-master

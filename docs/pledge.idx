@@ -1,0 +1,4 @@
+Example of making a single promise	pledge.html#example-of-making-a-single-promise	 Example of making a single promise	
+Example of making several promises	pledge.html#example-of-making-several-promises	 Example of making several promises	
+Promise	pledge.html#Promise	pledge : Promise	
+pledge	pledge.html#pledge,varargs[Promise]	pledge : pledge*(promises: varargs[Promise])	

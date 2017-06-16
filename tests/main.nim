@@ -1,12 +1,14 @@
-import ../pledge, unittest, os
+import pledge, unittest, os
 
 suite "pledge tests":
-  test  "can pledge":
-    check pledge(Promise.Stdio, Promise.Rpath)
+  test "can pledge":
+    pledge(Promise.Stdio, Promise.Rpath)
+
+    check true
 
   when defined(openbsd):
     test "can not elevate":
-      check pledge(Promise.Stdio)
+      pledge(Promise.Stdio)
 
       expect OSError:
-        check pledge(Promise.Stdio, Promise.Rpath) == false
+        pledge(Promise.Stdio, Promise.Rpath) == false
