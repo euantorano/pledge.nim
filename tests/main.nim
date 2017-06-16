@@ -11,4 +11,4 @@ suite "pledge tests":
       pledge(Promise.Stdio)
 
       expect OSError:
-        pledge(Promise.Stdio, Promise.Rpath) == false
+        pledge(Promise.Stdio, Promise.Rpath)

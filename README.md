@@ -18,6 +18,8 @@ Or add the following to your `.nimble` file:
 requires "pledge >= 1.1.0"
 ```
 
+## [Documentation](https://htmlpreview.github.io/?https://github.com/euantorano/pledge.nim/blob/master/docs/pledge.html)
+
 ## Usage
 
 ```nim
