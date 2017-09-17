@@ -22,9 +22,7 @@
 ##
 ##   pledge(Promise.Stdio, Promise.Rpath)
 
-from os import osLastError, raiseOSError
-from sequtils import map, deduplicate
-from strutils import join
+import macros, os, strutils
 
 type Promise* {.pure.} = enum
   ## The possible operation sets that a program can pledge to be limited to.
@@ -57,9 +55,11 @@ type Promise* {.pure.} = enum
   Audio = "audio",
   Bpf = "bpf"
 
-when defined(nimdoc):
-  proc pledge*(promises: varargs[Promise]) {.raises: [OSError].} = discard
-    ## Pledge to use only the defined functions. Always returns true on non-OpenBSD systems.
+when defined(nimdoc) or not defined(openbsd):
+  proc pledge*(promises: string) = discard
+    ## Pledge to use only the defined functions.
+    ##
+    ## The `promises` parameter is a string of space separated promises as described in the `pledge(2) man page <http://man.openbsd.org/cgi-bin/man.cgi/OpenBSD-current/man2/pledge.2?query=pledge>`_.
     ##
     ## If no promises are provided, the process will be restricted to the `_exit(2)` system call.
     ##
@@ -67,28 +67,31 @@ when defined(nimdoc):
 elif defined(openbsd):
   proc pledge_c(promises: cstring, paths: cstringArray): cint {.importc: "pledge", header: "<unistd.h>".}
 
-  proc promisesToString(promises: openArray[Promise]): string =
-    ## Convert a list of promises to a string for use with the `pledge(2)` function.
-    if len(promises) == 0:
-      return ""
-
-    let stringPromises = map(promises, proc(p: Promise): string = $p)
-    result = join(deduplicate(stringPromises), " ")
-
-  proc pledge*(promises: varargs[Promise]) {.raises: [OSError].} =
-    ## Pledge to use only the defined functions. Always returns true on non-OpenBSD systems.
+  proc pledge*(promises: string) =
+    ## Pledge to use only the defined functions.
+    ##
+    ## The `promises` parameter is a string of space separated promises as described in the `pledge(2) man page <http://man.openbsd.org/cgi-bin/man.cgi/OpenBSD-current/man2/pledge.2?query=pledge>`_.
     ##
     ## If no promises are provided, the process will be restricted to the `_exit(2)` system call.
     ##
     ## If the pledge call is not successful, an `OSError` will be thrown.
-    let promisesString = promisesToString(promises)
-
-    if pledge_c(promisesString, nil) != 0:
+    if pledge_c(promises, nil) != 0:
       raiseOSError(osLastError())
-else:
-  proc pledge*(promises: varargs[Promise]) = discard
-    ## Pledge to use only the defined functions. Always returns true on non-OpenBSD systems.
-    ##
-    ## If no promises are provided, the process will be restricted to the `_exit(2)` system call.
-    ##
-    ## If the pledge call is not successful, an `OSError` will be thrown.
+
+macro pledge*(promises: varargs[Promise]): untyped =
+  ## Pledge to use only the defined functions.
+  ##
+  ## This macro takes a list of `Promise` and creates the required promise string and emits a call to the `pledge` proc.
+  result = newNimNode(nnkStmtList)
+
+  var
+    promisesString = ""
+    sep = ""
+
+  for p in promises:
+    promisesString.add(sep)
+    promisesString.add(toLowerAscii($p))
+
+    sep = " "
+
+  result.add(newCall("pledge", newStrLitNode(promisesString)))
