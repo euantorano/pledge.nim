@@ -1222,7 +1222,7 @@ function main() {
   <a class="reference reference-toplevel" href="#7" id="57">Types</a>
   <ul class="simple simple-toc-section">
       <li><a class="reference" href="#Promise"
-    title="Promise* = enum
+    title="Promise = enum
   Stdio = &quot;stdio&quot;, Rpath = &quot;rpath&quot;, Wpath = &quot;wpath&quot;, Cpath = &quot;cpath&quot;, Dpath = &quot;dpath&quot;,
   Tmppath = &quot;tmppath&quot;, Inet = &quot;inet&quot;, Mcast = &quot;mcast&quot;, Fattr = &quot;fattr&quot;, Chown = &quot;chown&quot;,
   Flock = &quot;flock&quot;, Unix = &quot;unix&quot;, Dns = &quot;dns&quot;, Getpw = &quot;getpw&quot;, Sendfd = &quot;sendfd&quot;,
@@ -1236,15 +1236,15 @@ function main() {
   <a class="reference reference-toplevel" href="#12" id="62">Procs</a>
   <ul class="simple simple-toc-section">
       <li><a class="reference" href="#pledge,string"
-    title="pledge*(promises: string)"><wbr />pledge<span class="attachedType" style="visibility:hidden"></span></a></li>
+    title="pledge(promises: string)"><wbr />pledge<span class="attachedType" style="visibility:hidden"></span></a></li>
 
   </ul>
 </li>
 <li>
-  <a class="reference reference-toplevel" href="#16" id="66">Macros</a>
+  <a class="reference reference-toplevel" href="#17" id="67">Templates</a>
   <ul class="simple simple-toc-section">
-      <li><a class="reference" href="#pledge.m,varargs[Promise]"
-    title="pledge*(promises: varargs[Promise]): untyped"><wbr />pledge<span class="attachedType" style="visibility:hidden"></span></a></li>
+      <li><a class="reference" href="#pledge.t,varargs[Promise]"
+    title="pledge(promises: varargs[Promise])"><wbr />pledge<span class="attachedType" style="visibility:hidden">Promise</span></a></li>
 
   </ul>
 </li>
@@ -1268,12 +1268,12 @@ function main() {
   <div class="section" id="6">
 <h1><a class="toc-backref" href="#6">Imports</a></h1>
 <dl class="item">
-<a class="reference external" href="macros.html">macros</a>, <a class="reference external" href="os.html">os</a>, <a class="reference external" href="strutils.html">strutils</a>
+<a class="reference external" href="os.html">os</a>
 </dl></div>
 <div class="section" id="7">
 <h1><a class="toc-backref" href="#7">Types</a></h1>
 <dl class="item">
-<dt id="Promise"><a name="Promise"></a><pre><span class="Identifier">Promise</span><span class="Operator">*</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">pure</span></div><span class="Other pragmaend">.}</span> <span class="Other">=</span> <span class="Keyword">enum</span>
+<dt id="Promise"><a name="Promise"></a><pre><span class="Identifier">Promise</span> <span class="Other">=</span> <span class="Keyword">enum</span>
   <span class="Identifier">Stdio</span> <span class="Other">=</span> <span class="StringLit">&quot;stdio&quot;</span><span class="Other">,</span> <span class="Identifier">Rpath</span> <span class="Other">=</span> <span class="StringLit">&quot;rpath&quot;</span><span class="Other">,</span> <span class="Identifier">Wpath</span> <span class="Other">=</span> <span class="StringLit">&quot;wpath&quot;</span><span class="Other">,</span> <span class="Identifier">Cpath</span> <span class="Other">=</span> <span class="StringLit">&quot;cpath&quot;</span><span class="Other">,</span> <span class="Identifier">Dpath</span> <span class="Other">=</span> <span class="StringLit">&quot;dpath&quot;</span><span class="Other">,</span>
   <span class="Identifier">Tmppath</span> <span class="Other">=</span> <span class="StringLit">&quot;tmppath&quot;</span><span class="Other">,</span> <span class="Identifier">Inet</span> <span class="Other">=</span> <span class="StringLit">&quot;inet&quot;</span><span class="Other">,</span> <span class="Identifier">Mcast</span> <span class="Other">=</span> <span class="StringLit">&quot;mcast&quot;</span><span class="Other">,</span> <span class="Identifier">Fattr</span> <span class="Other">=</span> <span class="StringLit">&quot;fattr&quot;</span><span class="Other">,</span> <span class="Identifier">Chown</span> <span class="Other">=</span> <span class="StringLit">&quot;chown&quot;</span><span class="Other">,</span>
   <span class="Identifier">Flock</span> <span class="Other">=</span> <span class="StringLit">&quot;flock&quot;</span><span class="Other">,</span> <span class="Identifier">Unix</span> <span class="Other">=</span> <span class="StringLit">&quot;unix&quot;</span><span class="Other">,</span> <span class="Identifier">Dns</span> <span class="Other">=</span> <span class="StringLit">&quot;dns&quot;</span><span class="Other">,</span> <span class="Identifier">Getpw</span> <span class="Other">=</span> <span class="StringLit">&quot;getpw&quot;</span><span class="Other">,</span> <span class="Identifier">Sendfd</span> <span class="Other">=</span> <span class="StringLit">&quot;sendfd&quot;</span><span class="Other">,</span>
@@ -1289,7 +1289,7 @@ The possible operation sets that a program can pledge to be limited to.
 <div class="section" id="12">
 <h1><a class="toc-backref" href="#12">Procs</a></h1>
 <dl class="item">
-<dt id="pledge"><a name="pledge,string"></a><pre><span class="Keyword">proc</span> <span class="Identifier">pledge</span><span class="Operator">*</span><span class="Other">(</span><span class="Identifier">promises</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">)</span></pre></dt>
+<dt id="pledge"><a name="pledge,string"></a><pre><span class="Keyword">proc</span> <span class="Identifier">pledge</span><span class="Other">(</span><span class="Identifier">promises</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">)</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
 <dd>
 <p>Pledge to use only the defined functions.</p>
 <p>The <cite>promises</cite> parameter is a string of space separated promises as described in the <a class="reference external" href="http://man.openbsd.org/cgi-bin/man.cgi/OpenBSD-current/man2/pledge.2?query=pledge">pledge(2) man page</a>.</p>
@@ -1300,13 +1300,13 @@ The possible operation sets that a program can pledge to be limited to.
 </dd>
 
 </dl></div>
-<div class="section" id="16">
-<h1><a class="toc-backref" href="#16">Macros</a></h1>
+<div class="section" id="17">
+<h1><a class="toc-backref" href="#17">Templates</a></h1>
 <dl class="item">
-<dt id="pledge"><a name="pledge.m,varargs[Promise]"></a><pre><span class="Keyword">macro</span> <span class="Identifier">pledge</span><span class="Operator">*</span><span class="Other">(</span><span class="Identifier">promises</span><span class="Other">:</span> <span class="Identifier">varargs</span><span class="Other">[</span><span class="Identifier">Promise</span><span class="Other">]</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">untyped</span></pre></dt>
+<dt id="pledge"><a name="pledge.t,varargs[Promise]"></a><pre><span class="Keyword">template</span> <span class="Identifier">pledge</span><span class="Other">(</span><span class="Identifier">promises</span><span class="Other">:</span> <span class="Identifier">varargs</span><span class="Other">[</span><span class="Identifier">Promise</span><span class="Other">]</span><span class="Other">)</span></pre></dt>
 <dd>
 <p>Pledge to use only the defined functions.</p>
-<p>This macro takes a list of <cite>Promise</cite> and creates the required promise string and emits a call to the <cite>pledge</cite> proc.</p>
+<p>This template takes a list of <cite>Promise</cite>, creates the required promise string and emits a call to the <cite>pledge</cite> proc.</p>
 
 
 </dd>
@@ -1320,7 +1320,7 @@ The possible operation sets that a program can pledge to be limited to.
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small>Made with Nim. Generated: 2017-09-17 23:03:51 UTC</small>
+        <small>Made with Nim. Generated: 2017-10-12 09:12:41 UTC</small>
       </div>
     </div>
   </div>

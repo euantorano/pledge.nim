@@ -22,7 +22,7 @@
 ##
 ##   pledge(Promise.Stdio, Promise.Rpath)
 
-import macros, os, strutils
+import os
 
 type Promise* {.pure.} = enum
   ## The possible operation sets that a program can pledge to be limited to.
@@ -78,20 +78,24 @@ elif defined(openbsd):
     if pledge_c(promises, nil) != 0:
       raiseOSError(osLastError())
 
-macro pledge*(promises: varargs[Promise]): untyped =
-  ## Pledge to use only the defined functions.
-  ##
-  ## This macro takes a list of `Promise` and creates the required promise string and emits a call to the `pledge` proc.
-  result = newNimNode(nnkStmtList)
+proc getPromisesString(promises: openarray[Promise]): string {.compiletime.} =
+  result = ""
 
   var
-    promisesString = ""
+    promiseSet: set[Promise] = {}
     sep = ""
 
   for p in promises:
-    promisesString.add(sep)
-    promisesString.add(toLowerAscii($p))
+    if p notin promiseSet:
+      promiseSet.incl(p)
+      result.add(sep)
+      result.add($p)
 
-    sep = " "
+      sep = " "
 
-  result.add(newCall("pledge", newStrLitNode(promisesString)))
+template pledge*(promises: varargs[Promise]) =
+  ## Pledge to use only the defined functions.
+  ##
+  ## This template takes a list of `Promise`, creates the required promise string and emits a call to the `pledge` proc.
+  const promisesString = getPromisesString(promises)
+  pledge(promisesString)
