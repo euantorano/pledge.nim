@@ -1,6 +1,6 @@
 # pledge.nim [![Travis CI Status](https://travis-ci.org/euantorano/pledge.nim.svg?branch=master)](https://travis-ci.org/euantorano/pledge.nim)
 
-A wrapper around OpenBSD's pledge(2) systemcall for Nim.
+A wrapper around OpenBSD's `pledge(2)` systemcall for Nim.
 
 ## Installation
 
