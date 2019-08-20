@@ -1,4 +1,4 @@
-# pledge.nim
+# pledge.nim [![builds.sr.ht status](https://builds.sr.ht/~euantorano.svg?search=pledge.nim)](https://builds.sr.ht/~euantorano?search=pledge.nim)
 
 A wrapper around OpenBSD's `pledge(2)` systemcall for Nim.
 
