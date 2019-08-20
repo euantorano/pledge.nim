@@ -1,0 +1,20 @@
+image: openbsd/latest
+packages:
+- xz
+sources:
+- https://github.com/euantorano/pledge.nim.git
+environment:
+  NIM_VERSION: 0.20.2
+  CC: /usr/bin/clang
+tasks:
+- install_nim: |
+    curl https://nim-lang.org/download/nim-${NIM_VERSION}.tar.xz -o nim.tar.xz
+    xz -d nim.tar.xz
+    tar -xf nim.tar
+    rm nim.tar
+    cd nim-${NIM_VERSION}
+    sh build.sh
+    bin/nim c koch
+    ./koch tools --cc:clang
+- test: |
+    env PATH="$HOME/nim-${NIM_VERSION}/bin:$PATH" nim c --cc:clang -r tests/main.nim

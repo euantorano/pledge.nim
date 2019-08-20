@@ -1,4 +1,4 @@
-# pledge.nim [![Travis CI Status](https://travis-ci.org/euantorano/pledge.nim.svg?branch=master)](https://travis-ci.org/euantorano/pledge.nim)
+# pledge.nim
 
 A wrapper around OpenBSD's `pledge(2)` systemcall for Nim.
 

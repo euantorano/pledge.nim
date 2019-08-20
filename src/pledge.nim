@@ -64,7 +64,7 @@ when defined(nimdoc) or not defined(openbsd):
     ##
     ## If no promises are provided, the process will be restricted to the `_exit(2)` system call.
 elif defined(openbsd):
-  import posix, strformat
+  import posix_utils, strformat
 
   proc pledge_c(promises: cstring, execpromises: cstring): cint {.importc: "pledge", header: "<unistd.h>".}
 
@@ -98,14 +98,14 @@ elif defined(openbsd):
       raise newException(PledgeNotAvailableError, &"pledge(2) system call is not available on OpenBSD {osVersion.major}.{osVersion.minor}")
 
     # now check if execPromises is set - it's only available from openBSD 6.3+
-    if (osVersion.major < 6 or (osVersion.major == 6 and osVersion.minor <= 2)) and execPromises.isSome() != 0:
+    if (osVersion.major < 6 or (osVersion.major == 6 and osVersion.minor <= 2)) and execPromises.isSome():
       raise newException(PledgeExecPromisesNotAvailableError, &"cannot use execpromises with pledge(2) on OpenBSD {osVersion.major}.{osVersion.minor}")
 
     var promisesValue: cstring = if promises.isSome(): cstring(promises.get()) else: nil
     var execPromisesValue: cstring = nil
 
     # if running on openBSD <= 6.2, execpromises should be passed as NULL
-    if osVersion.major > 6 or (osVerison.major == 6 and osVersion.minor > 2):
+    if osVersion.major > 6 or (osVersion.major == 6 and osVersion.minor > 2):
       execPromisesValue = if execPromises.isSome(): cstring(execPromises.get()) else: nil
 
     if pledge_c(promisesValue, execPromisesValue) != 0:
