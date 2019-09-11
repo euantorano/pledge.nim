@@ -2,7 +2,7 @@ image: openbsd/latest
 packages:
 - xz
 sources:
-- https://github.com/euantorano/pledge.nim.git
+- https://github.com/euantorano/pledge.nim
 environment:
   NIM_VERSION: 0.20.2
   CC: /usr/bin/clang
