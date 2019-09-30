@@ -1,18 +1,5 @@
 import pledge, unittest, os
 
-suite "pledge tests":
-  test "can pledge":
-    pledge(Promise.Stdio, Promise.Rpath)
-
-    check true
-
-  when defined(openbsd):
-    test "can not elevate":
-      pledge(Promise.Stdio)
-
-      expect OSError:
-        pledge(Promise.Stdio, Promise.Rpath)
-
 suite "unveil tests":
   test "can access path that is unveiled":
     unveil("/dev/urandom", {Permission.Read})
@@ -25,7 +12,20 @@ suite "unveil tests":
   when defined(openbsd):
     test "can't access path that isn't unveiled":
       unveil("/dev/urandom", {Permission.Read})
+      unveil("", {})
+
+      var f: File
+      check not open(f, "/dev/zero", fmRead)
+
+suite "pledge tests":
+  test "can pledge":
+    pledge(Promise.Stdio, Promise.Rpath, Promise.Unveil)
+
+    check true
+
+  when defined(openbsd):
+    test "can not elevate":
+      pledge(Promise.Stdio, Promise.Unveil)
 
       expect OSError:
-        var f: File
-        open(f, "/dev/zero", fmRead)
+        pledge(Promise.Stdio, Promise.Rpath, Promise.Unveil)
