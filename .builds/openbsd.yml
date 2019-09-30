@@ -4,7 +4,7 @@ packages:
 sources:
 - https://github.com/euantorano/pledge.nim
 environment:
-  NIM_VERSION: 1.0.0
+  NIM_VERSION: 0.20.2
   CC: /usr/bin/clang
 tasks:
 - install_nim: |
@@ -21,5 +21,5 @@ tasks:
     env PATH="$HOME/nim-${NIM_VERSION}/bin:$PATH" nim c --cc:clang -r tests/main.nim
 triggers:
 - action: email
-  condition: failure
+  condition: always
   to: Euan T <euan+pledge.nim@torano.co.uk>
