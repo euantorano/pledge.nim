@@ -126,11 +126,11 @@ elif defined(openbsd):
 
   proc unveil*(path: Option[string], permissions: Option[string]) =
     ## Unveil parts of a restricted filesystem view.
-    if (osVersion.major == 6 and osVerison.minor < 4) or osVersion.major < 6:
+    if (osVersion.major == 6 and osVersion.minor < 4) or osVersion.major < 6:
       raise newException(UnveilNotAvailableException, &"unveil(2) system call is not available on OpenBSD {osVersion.major}.{osVersion.minor}")
 
     let pathValue: cstring = if path.isSome(): cstring(path.get()) else: nil
-    let permissionsValue: cstring = if permissions.isSome(): cstrimg(permissions.get()) else: nil
+    let permissionsValue: cstring = if permissions.isSome(): cstring(permissions.get()) else: nil
 
     if unveil_c(pathValue, permissionsValue) != 0:
       raiseOSError(osLastError())
