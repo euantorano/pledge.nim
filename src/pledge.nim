@@ -22,7 +22,7 @@
 ##
 ##   pledge(Promise.Stdio, Promise.Rpath)
 
-import os, options
+import options
 
 type Promise* {.pure.} = enum
   ## The possible operation sets that a program can pledge to be limited to.
@@ -58,15 +58,26 @@ type Promise* {.pure.} = enum
   Unveil = "unveil",
   Error = "error"
 
+type Permission* {.pure.} = enum
+  ## The possible permissions that a call to `unveil` can be used with.
+  CreateRemove = 'c'
+  Read = 'r'
+  Write = 'w'
+  Execute = 'x'
+
 when defined(nimdoc) or not defined(openbsd):
   proc pledge*(promises: Option[string], execPromises: Option[string] = none(string)) = discard
     ## Pledge to use only the defined functions.
     ##
     ## If no promises are provided, the process will be restricted to the `_exit(2)` system call.
+
+  proc unveil*(path: Option[string], permissions: Option[string]) = discard
+    ## Unveil parts of a restricted filesystem view.
 elif defined(openbsd):
-  import posix_utils, strformat
+  import os, posix_utils, strformat
 
   proc pledge_c(promises: cstring, execpromises: cstring): cint {.importc: "pledge", header: "<unistd.h>".}
+  proc unveil_c(path: cstring, permissions: cstring): cint {.importc: "unveil", header: "<unistd.h>".}
 
   type
     OpenBsdVersion = object
@@ -75,6 +86,8 @@ elif defined(openbsd):
     PledgeException* = object of Exception
     PledgeNotAvailableError* = object of PledgeException
     PledgeExecPromisesNotAvailableError* = object of PledgeException
+    UnveilException* = object of Exception
+    UnveilNotAvailableException* = object of UnveilException
 
   proc getOpenBsdVersion(): OpenBsdVersion =
     let uname = uname()
@@ -101,7 +114,7 @@ elif defined(openbsd):
     if (osVersion.major < 6 or (osVersion.major == 6 and osVersion.minor <= 2)) and execPromises.isSome():
       raise newException(PledgeExecPromisesNotAvailableError, &"cannot use execpromises with pledge(2) on OpenBSD {osVersion.major}.{osVersion.minor}")
 
-    var promisesValue: cstring = if promises.isSome(): cstring(promises.get()) else: nil
+    let promisesValue: cstring = if promises.isSome(): cstring(promises.get()) else: nil
     var execPromisesValue: cstring = nil
 
     # if running on openBSD <= 6.2, execpromises should be passed as NULL
@@ -111,9 +124,18 @@ elif defined(openbsd):
     if pledge_c(promisesValue, execPromisesValue) != 0:
       raiseOSError(osLastError())
 
-proc getPromisesString(promises: openarray[Promise]): string {.compiletime.} =
-  result = ""
+  proc unveil*(path: Option[string], permissions: Option[string]) =
+    ## Unveil parts of a restricted filesystem view.
+    if (osVersion.major == 6 and osVerison.minor < 4) or osVersion.major < 6:
+      raise newException(UnveilNotAvailableException, &"unveil(2) system call is not available on OpenBSD {osVersion.major}.{osVersion.minor}")
 
+    let pathValue: cstring = if path.isSome(): cstring(path.get()) else: nil
+    let permissionsValue: cstring = if permissions.isSome(): cstrimg(permissions.get()) else: nil
+
+    if unveil_c(pathValue, permissionsValue) != 0:
+      raiseOSError(osLastError())
+
+proc getPromisesString(promises: openarray[Promise]): string {.compiletime.} =
   var
     promiseSet: set[Promise] = {}
     sep = ""
@@ -126,6 +148,17 @@ proc getPromisesString(promises: openarray[Promise]): string {.compiletime.} =
 
       sep = " "
 
+proc getPermissionsString(permissions: set[Permission]): Option[string] {.compiletime.} =
+  var s = ""
+
+  for p in permissions:
+    s.add(char(p))
+
+  if len(s) > 0:
+    result = some(s)
+  else:
+    result = none(string)
+
 template pledge*(promises: varargs[Promise]) =
   ## Pledge to use only the defined functions.
   ##
@@ -135,3 +168,8 @@ template pledge*(promises: varargs[Promise]) =
     pledge(some(promisesString))
   else:
     pledge(none(string))
+
+template unveil*(path: string, permissions: set[Permission]) =
+  ## Unveil parts of a restricted filesystem view.
+  let pathValue = if len(path) > 0: some(path) else: none(string)
+  unveil(pathValue, getPermissionsString(permissions))
