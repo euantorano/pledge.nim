@@ -28,4 +28,4 @@ suite "unveil tests":
 
       expect OSError:
         var f: File
-        check open(f, "/dev/zero", fmRead)
+        open(f, "/dev/zero", fmRead)
