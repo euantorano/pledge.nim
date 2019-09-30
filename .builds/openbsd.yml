@@ -21,5 +21,5 @@ tasks:
     env PATH="$HOME/nim-${NIM_VERSION}/bin:$PATH" nim c --cc:clang -r tests/main.nim
 triggers:
 - action: email
-  condition: failure
+  condition: always
   to: Euan T <euan+pledge.nim@torano.co.uk>

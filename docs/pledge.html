@@ -836,6 +836,9 @@ function main() {
   Recvfd = &quot;recvfd&quot;, Tape = &quot;tape&quot;, Tty = &quot;tty&quot;, Proc = &quot;proc&quot;, Exec = &quot;exec&quot;,
   ProtExec = &quot;prot_exec&quot;, Settime = &quot;settime&quot;, Ps = &quot;ps&quot;, Vminfo = &quot;vminfo&quot;, Id = &quot;id&quot;,
   Pf = &quot;pf&quot;, Audio = &quot;audio&quot;, Video = &quot;video&quot;, Bpf = &quot;bpf&quot;, Unveil = &quot;unveil&quot;, Error = &quot;error&quot;"><wbr />Promise<span class="attachedType"></span></a></li>
+  <li><a class="reference" href="#Permission"
+    title="Permission {.pure.} = enum
+  CreateRemove = &apos;c&apos;, Read = &apos;r&apos;, Write = &apos;w&apos;, Execute = &apos;x&apos;"><wbr />Permission<span class="attachedType"></span></a></li>
 
   </ul>
 </li>
@@ -844,6 +847,8 @@ function main() {
   <ul class="simple simple-toc-section">
       <li><a class="reference" href="#pledge%2COption%5Bstring%5D%2COption%5Bstring%5D"
     title="pledge(promises: Option[string]; execPromises: Option[string] = none(string))"><wbr />pledge<span class="attachedType"></span></a></li>
+  <li><a class="reference" href="#unveil%2COption%5Bstring%5D%2COption%5Bstring%5D"
+    title="unveil(path: Option[string]; permissions: Option[string])"><wbr />unveil<span class="attachedType"></span></a></li>
 
   </ul>
 </li>
@@ -852,6 +857,8 @@ function main() {
   <ul class="simple simple-toc-section">
       <li><a class="reference" href="#pledge.t%2Cvarargs%5BPromise%5D"
     title="pledge(promises: varargs[Promise])"><wbr />pledge<span class="attachedType"></span></a></li>
+  <li><a class="reference" href="#unveil.t%2Cstring%2Cset%5BPermission%5D"
+    title="unveil(path: string; permissions: set[Permission])"><wbr />unveil<span class="attachedType"></span></a></li>
 
   </ul>
 </li>
@@ -889,6 +896,14 @@ function main() {
 The possible operation sets that a program can pledge to be limited to.
 
 </dd>
+<a id="Permission"></a>
+<dt><pre><a href="pledge.html#Permission"><span class="Identifier">Permission</span></a> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">pure</span></span><span class="Other">.}</span></span> <span class="Other">=</span> <span class="Keyword">enum</span>
+  <span class="Identifier">CreateRemove</span> <span class="Other">=</span> <span class="CharLit">'c'</span><span class="Other">,</span> <span class="Identifier">Read</span> <span class="Other">=</span> <span class="CharLit">'r'</span><span class="Other">,</span> <span class="Identifier">Write</span> <span class="Other">=</span> <span class="CharLit">'w'</span><span class="Other">,</span> <span class="Identifier">Execute</span> <span class="Other">=</span> <span class="CharLit">'x'</span></pre></dt>
+<dd>
+
+The possible permissions that a call to <tt class="docutils literal"><span class="pre">unveil</span></tt> can be used with.
+
+</dd>
 
 </dl></div>
 <div class="section" id="12">
@@ -902,6 +917,13 @@ The possible operation sets that a program can pledge to be limited to.
 <p>Pledge to use only the defined functions.</p>
 <p>If no promises are provided, the process will be restricted to the <tt class="docutils literal"><span class="pre">_exit(2)</span></tt> system call.</p>
 
+
+</dd>
+<a id="unveil,Option[string],Option[string]"></a>
+<dt><pre><span class="Keyword">proc</span> <a href="#unveil%2COption%5Bstring%5D%2COption%5Bstring%5D"><span class="Identifier">unveil</span></a><span class="Other">(</span><span class="Identifier">path</span><span class="Other">:</span> <span class="Identifier">Option</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">permissions</span><span class="Other">:</span> <span class="Identifier">Option</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+
+Unveil parts of a restricted filesystem view.
 
 </dd>
 
@@ -918,6 +940,13 @@ The possible operation sets that a program can pledge to be limited to.
 
 
 </dd>
+<a id="unveil.t,string,set[Permission]"></a>
+<dt><pre><span class="Keyword">template</span> <a href="#unveil.t%2Cstring%2Cset%5BPermission%5D"><span class="Identifier">unveil</span></a><span class="Other">(</span><span class="Identifier">path</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">;</span> <span class="Identifier">permissions</span><span class="Other">:</span> <span class="Identifier">set</span><span class="Other">[</span><a href="pledge.html#Permission"><span class="Identifier">Permission</span></a><span class="Other">]</span><span class="Other">)</span></pre></dt>
+<dd>
+
+Unveil parts of a restricted filesystem view.
+
+</dd>
 
 </dl></div>
 
@@ -928,7 +957,7 @@ The possible operation sets that a program can pledge to be limited to.
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small>Made with Nim. Generated: 2019-08-20 12:07:44 UTC</small>
+        <small>Made with Nim. Generated: 2019-09-30 19:55:46 UTC</small>
       </div>
     </div>
   </div>
