@@ -1,4 +1,4 @@
-import pledge, unittest, os
+import pledge, unittest
 
 suite "unveil tests":
   test "can access path that is unveiled":
