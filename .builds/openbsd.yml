@@ -4,11 +4,11 @@ packages:
 sources:
 - https://github.com/euantorano/pledge.nim
 environment:
-  NIM_VERSION: 0.20.2
+  NIM_VERSION: 1.0.4
   CC: /usr/bin/clang
 tasks:
 - install_nim: |
-    curl https://nim-lang.org/download/nim-${NIM_VERSION}.tar.xz -o nim.tar.xz
+    ftp -o nim.tar.xz https://nim-lang.org/download/nim-${NIM_VERSION}.tar.xz
     xz -d nim.tar.xz
     tar -xf nim.tar
     rm nim.tar
