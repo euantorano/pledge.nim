@@ -15,7 +15,6 @@ tasks:
     cd nim-${NIM_VERSION}
     sh build.sh
     bin/nim c koch
-    ./koch tools --cc:clang
 - test: |
     cd pledge.nim
     env PATH="$HOME/nim-${NIM_VERSION}/bin:$PATH" nim c --cc:clang -r tests/main.nim
