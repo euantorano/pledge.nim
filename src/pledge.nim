@@ -114,7 +114,7 @@ elif defined(openbsd):
     if (osVersion.major < 6 or (osVersion.major == 6 and osVersion.minor <= 2)) and execPromises.isSome():
       raise newException(PledgeExecPromisesNotAvailableError, &"cannot use execpromises with pledge(2) on OpenBSD {osVersion.major}.{osVersion.minor}")
 
-    let promisesValue: cstring = if promises.isSome(): cstring(promises.get()) else: nil
+    let promisesValue: cstring = if promises.isSome(): cstring(promises.get()) else: ""
     var execPromisesValue: cstring = nil
 
     # if running on openBSD <= 6.2, execpromises should be passed as NULL
